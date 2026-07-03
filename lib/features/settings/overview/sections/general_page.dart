@@ -72,7 +72,7 @@ class GeneralPage extends HookConsumerWidget {
               SwitchListTile.adaptive(
                 title: Text(t.pages.settings.general.hideFromDock),
                 subtitle: const Text("App will only appear in the menu bar"),
-                secondary: const Icon(Icons.dock_hidden_rounded),
+                secondary: const Icon(Icons.desktop_mac_outlined),
                 value: ref.watch(Preferences.hideFromDock),
                 onChanged: (value) async {
                   await ref.read(Preferences.hideFromDock.notifier).update(value);
