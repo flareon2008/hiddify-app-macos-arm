@@ -1,0 +1,60 @@
+name: Build macOS ARM
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+env:
+  FLUTTER_VERSION: '3.38.5'
+
+jobs:
+  build-macos:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Flutter info
+        run: flutter doctor -v
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: flutter pub run build_runner build --delete-conflicting-outputs || true
+
+      - name: Generate translations
+        run: dart run slang || true
+
+      - name: Build macOS ARM
+        run: flutter build macos --release --target-platform macos-arm64
+
+      - name: Create DMG
+        run: |
+          mkdir -p build/dmg
+          cp -r build/macos/Build/Products/Release/Hiddify.app build/dmg/
+          hdiutil create -volname "Hiddify" -srcfolder build/dmg -ov -format UDZO build/Hiddify-macOS-ARM.dmg
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hiddify-macOS-ARM
+          path: build/Hiddify-macOS-ARM.dmg
+          retention-days: 7
+
+      - name: Upload App
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hiddify-macOS-ARM-app
+          path: build/macos/Build/Products/Release/Hiddify.app
+          retention-days: 7
