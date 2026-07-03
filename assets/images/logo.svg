@@ -1,0 +1,6 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- macOS 26 style green shield -->
+<path d="M32 4L8 14V30C8 46.57 18.4 62.17 32 64C45.6 62.17 56 46.57 56 30V14L32 4Z" fill="#30D158"/>
+<!-- White checkmark -->
+<path d="M24 33L29 38L40 26" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
