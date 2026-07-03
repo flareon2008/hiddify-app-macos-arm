@@ -11,7 +11,7 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
 
 
- // Add FlutterMethodChannel platform code
+ // Add FlutterMethodChannel platform code - launch at startup
     FlutterMethodChannel(
       name: "launch_at_startup", binaryMessenger: flutterViewController.engine.binaryMessenger
     )
@@ -24,6 +24,34 @@ class MainFlutterWindow: NSWindow {
           LaunchAtLogin.isEnabled = arguments["setEnabledValue"] as! Bool
         }
         result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+
+    // Dock visibility channel - hide/show from macOS Dock
+    FlutterMethodChannel(
+      name: "com.hiddify/dock_visibility", binaryMessenger: flutterViewController.engine.binaryMessenger
+    )
+    .setMethodCallHandler { (_ call: FlutterMethodCall, result: @escaping FlutterResult) in
+      switch call.method {
+      case "setDockVisibility":
+        if let args = call.arguments as? [String: Any],
+           let visible = args["visible"] as? Bool {
+          DispatchQueue.main.async {
+            if visible {
+              NSApp.setActivationPolicy(.regular)
+            } else {
+              NSApp.setActivationPolicy(.accessory)
+            }
+          }
+          result(nil)
+        } else {
+          result(FlutterError(code: "INVALID_ARGS", message: "Invalid arguments", details: nil))
+        }
+      case "getDockVisibility":
+        let isRegular = NSApp.activationPolicy() == .regular
+        result(isRegular)
       default:
         result(FlutterMethodNotImplemented)
       }
