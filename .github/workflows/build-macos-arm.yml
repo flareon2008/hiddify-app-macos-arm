@@ -7,6 +7,7 @@ on:
 
 env:
   FLUTTER_VERSION: '3.38.5'
+  IS_GITHUB_ACTIONS: 1
 
 jobs:
   build-macos:
@@ -27,32 +28,34 @@ jobs:
       - name: Flutter info
         run: flutter doctor -v
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Prepare (deps + codegen + core libs)
+        run: make macos-prepare
 
-      - name: Run code generation
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build and package
+        run: make macos-release
 
-      - name: Generate translations
-        run: dart run slang
-
-      - name: Build macOS
-        run: flutter build macos --release
-
-      - name: Create DMG
+      - name: Find artifacts
+        id: find_artifacts
         run: |
-          hdiutil create -volname "Hiddify" -srcfolder "build/macos/xcode/Build/Products/Release/Hiddify.app" -ov -format UDZO "build/Hiddify-macOS-ARM.dmg"
+          echo "DMG file:"
+          find dist -name "*.dmg" -type f
+          echo "PKG file:"
+          find dist -name "*.pkg" -type f
+          mkdir -p out
+          cp dist/*/*.dmg out/ 2>/dev/null || true
+          cp dist/*/*.pkg out/ 2>/dev/null || true
+          ls -la out/
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
           name: Hiddify-macOS-ARM-dmg
-          path: build/Hiddify-macOS-ARM.dmg
+          path: out/*.dmg
           retention-days: 7
 
-      - name: Upload App
+      - name: Upload PKG
         uses: actions/upload-artifact@v4
         with:
-          name: Hiddify-macOS-ARM-app
-          path: build/macos/xcode/Build/Products/Release/Hiddify.app
+          name: Hiddify-macOS-ARM-pkg
+          path: out/*.pkg
           retention-days: 7
