@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' as io;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
   Future<void> build() async {
     if (!PlatformUtils.isDesktop) return;
 
-    // if (Platform.isWindows) {
+    // if (io.Platform.isWindows) {
     //   loggy.debug("ensuring single instance");
     //   await WindowsSingleInstance.ensureSingleInstance([], "Hiddify");
     // }
@@ -61,7 +61,7 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
     loggy.debug("window state. hide from dock: ${hideFromDock ? "Enabled" : "Disabled"}");
 
     // Apply dock visibility on macOS
-    if (Platform.isMacOS) {
+    if (io.Platform.isMacOS) {
       try {
         await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': !hideFromDock});
       } catch (e) {
@@ -113,7 +113,7 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
   Future<void> show({bool focus = true}) async {
     await windowManager.show();
     if (focus) await windowManager.focus();
-    if (Platform.isMacOS) {
+    if (io.Platform.isMacOS) {
       // Show in dock when window is shown
       final hideFromDock = ref.read(Preferences.hideFromDock);
       if (!hideFromDock) {
@@ -124,7 +124,7 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
 
   Future<void> hide() async {
     await windowManager.hide();
-    if (Platform.isMacOS) {
+    if (io.Platform.isMacOS) {
       await windowManager.setSkipTaskbar(true);
     }
   }
@@ -139,7 +139,7 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
 
   /// Toggle dock visibility (macOS only)
   Future<void> setDockVisibility(bool visible) async {
-    if (!Platform.isMacOS) return;
+    if (!io.Platform.isMacOS) return;
     try {
       await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': visible});
       loggy.debug("dock visibility set to: $visible");
@@ -159,6 +159,6 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
     await trayManager.destroy();
     await windowManager.destroy();
     // Force terminate the app process (windowManager.destroy alone may not quit on macOS)
-    exit(0);
+    io.exit(0);
   }
 }
