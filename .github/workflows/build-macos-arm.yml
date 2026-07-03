@@ -25,6 +25,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Install fastforge
+        run: dart pub global activate fastforge
+
       - name: Flutter info
         run: flutter doctor -v
 
@@ -35,15 +38,13 @@ jobs:
         run: make macos-release
 
       - name: Find artifacts
-        id: find_artifacts
         run: |
-          echo "DMG file:"
-          find dist -name "*.dmg" -type f
-          echo "PKG file:"
-          find dist -name "*.pkg" -type f
+          echo "=== dist contents ==="
+          find dist -type f || echo "no dist"
+          echo "=== out contents ==="
           mkdir -p out
-          cp dist/*/*.dmg out/ 2>/dev/null || true
-          cp dist/*/*.pkg out/ 2>/dev/null || true
+          find dist -name "*.dmg" -exec cp {} out/ \; 2>/dev/null || true
+          find dist -name "*.pkg" -exec cp {} out/ \; 2>/dev/null || true
           ls -la out/
 
       - name: Upload DMG
