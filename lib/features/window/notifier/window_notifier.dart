@@ -158,5 +158,7 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
         });
     await trayManager.destroy();
     await windowManager.destroy();
+    // Force terminate the app process (windowManager.destroy alone may not quit on macOS)
+    exit(0);
   }
 }
