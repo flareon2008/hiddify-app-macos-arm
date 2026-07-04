@@ -111,12 +111,30 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
   }
 
   Future<void> show({bool focus = true}) async {
+    if (io.Platform.isMacOS) {
+      final hideFromDock = ref.read(Preferences.hideFromDock);
+      if (hideFromDock) {
+        // Temporarily make app regular so window can show and receive focus
+        try {
+          await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': true});
+        } catch (e) {
+          loggy.warning("Failed to set dock visibility for show", e);
+        }
+      }
+    }
     await windowManager.show();
     if (focus) await windowManager.focus();
     if (io.Platform.isMacOS) {
-      // Show in dock when window is shown
       final hideFromDock = ref.read(Preferences.hideFromDock);
-      if (!hideFromDock) {
+      if (hideFromDock) {
+        // After window is shown and focused, hide from dock again
+        await Future.delayed(const Duration(milliseconds: 200));
+        try {
+          await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': false});
+        } catch (e) {
+          loggy.warning("Failed to re-hide dock after show", e);
+        }
+      } else {
         await windowManager.setSkipTaskbar(false);
       }
     }
