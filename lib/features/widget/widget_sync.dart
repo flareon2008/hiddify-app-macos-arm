@@ -3,41 +3,37 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:hiddify/features/connection/model/connection_status.dart';
-import 'package:hiddify/features/connection/notifier/connection_notifier.dart';
 import 'package:hiddify/utils/utils.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// Bridges VPN status between the Flutter app and the macOS Control Center widget.
 /// Writes connection status to shared UserDefaults (App Group)
 /// and polls for toggle requests from the widget.
-class WidgetSyncNotifier extends Notifier<void> with AppLogger {
+class WidgetSync {
   static const _channel = MethodChannel('com.hiddify/widget_sync');
+  static Timer? _pollTimer;
+  static bool _listening = false;
 
-  Timer? _pollTimer;
+  static final _loggy = AppLogger();
 
-  @override
-  void build() {
-    if (!Platform.isMacOS) return;
+  /// Start polling for widget toggle requests. Call once on app startup.
+  static void startPolling({required Future<void> Function() onToggle}) {
+    if (!Platform.isMacOS || _listening) return;
+    _listening = true;
 
-    // Poll for widget toggle requests every 2 seconds
     _pollTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
       try {
         final hasToggled = await _channel.invokeMethod<bool>('checkToggleRequest');
         if (hasToggled == true) {
-          loggy.debug('Widget toggle request detected, toggling VPN');
-          await ref.read(connectionNotifierProvider.notifier).toggleConnection();
+          _loggy.debug('Widget toggle request detected');
+          await onToggle();
         }
       } catch (e) {
-        // Widget sync is best-effort, ignore errors
+        // Widget sync is best-effort
       }
-    });
-
-    ref.onDispose(() {
-      _pollTimer?.cancel();
     });
   }
 
-  /// Call this to sync current connection status to the widget
+  /// Sync current connection status to the widget
   static Future<void> syncStatus(ConnectionStatus status, int delay) async {
     if (!Platform.isMacOS) return;
     try {
@@ -47,7 +43,13 @@ class WidgetSyncNotifier extends Notifier<void> with AppLogger {
         'delay': delay,
       });
     } catch (e) {
-      // Widget sync is best-effort, ignore errors
+      // Widget sync is best-effort
     }
+  }
+
+  static void dispose() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+    _listening = false;
   }
 }

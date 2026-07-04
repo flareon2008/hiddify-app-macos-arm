@@ -8,7 +8,7 @@ import 'package:hiddify/features/connection/notifier/connection_notifier.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
 import 'package:hiddify/features/settings/data/config_option_repository.dart';
 import 'package:hiddify/features/window/notifier/window_notifier.dart';
-import 'package:hiddify/features/widget/widget_sync_notifier.dart';
+import 'package:hiddify/features/widget/widget_sync.dart';
 import 'package:hiddify/gen/assets.gen.dart';
 import 'package:hiddify/hiddifycore/generated/v2/hcore/hcore.pb.dart';
 import 'package:hiddify/singbox/model/singbox_config_enum.dart';
@@ -30,7 +30,9 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
       listenerAdded = true;
     }
     // Initialize widget sync for Control Center
-    ref.watch(widgetSyncNotifierProvider);
+    WidgetSync.startPolling(
+      onToggle: () => ref.read(connectionNotifierProvider.notifier).toggleConnection(),
+    );
     await _initializeTray();
   }
 

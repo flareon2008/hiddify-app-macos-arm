@@ -11,7 +11,7 @@ import 'package:hiddify/features/connection/model/connection_status.dart';
 import 'package:hiddify/features/profile/model/profile_entity.dart';
 import 'package:hiddify/features/profile/notifier/active_profile_notifier.dart';
 import 'package:hiddify/features/proxy/active/active_proxy_notifier.dart';
-import 'package:hiddify/features/widget/widget_sync_notifier.dart';
+import 'package:hiddify/features/widget/widget_sync.dart';
 import 'package:hiddify/hiddifycore/init_signal.dart';
 import 'package:hiddify/utils/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -38,7 +38,7 @@ class ConnectionNotifier extends _$ConnectionNotifier with AppLogger {
       // Sync status to macOS Control Center widget
       if (next case AsyncData(:final value)) {
         final delay = ref.read(activeProxyNotifierProvider).valueOrNull?.urlTestDelay ?? 0;
-        await WidgetSyncNotifier.syncStatus(value, delay);
+        await WidgetSync.syncStatus(value, delay);
       }
 
       if (previous case AsyncData(:final value) when !value.isConnected) {
