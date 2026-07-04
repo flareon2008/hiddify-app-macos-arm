@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:hiddify/features/connection/model/connection_status.dart';
-import 'package:hiddify/utils/utils.dart';
 
 /// Bridges VPN status between the Flutter app and the macOS Control Center widget.
 /// Writes connection status to shared UserDefaults (App Group)
@@ -12,8 +11,6 @@ class WidgetSync {
   static const _channel = MethodChannel('com.hiddify/widget_sync');
   static Timer? _pollTimer;
   static bool _listening = false;
-
-  static final _loggy = AppLogger();
 
   /// Start polling for widget toggle requests. Call once on app startup.
   static void startPolling({required Future<void> Function() onToggle}) {
@@ -24,7 +21,7 @@ class WidgetSync {
       try {
         final hasToggled = await _channel.invokeMethod<bool>('checkToggleRequest');
         if (hasToggled == true) {
-          _loggy.debug('Widget toggle request detected');
+          print('[WidgetSync] Widget toggle request detected');
           await onToggle();
         }
       } catch (e) {
