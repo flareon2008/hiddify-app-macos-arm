@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -143,37 +144,47 @@ class HomePage extends HookConsumerWidget {
               Positioned(
                 right: 0,
                 left: 0,
-                bottom: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Material(
-                      color: theme.colorScheme.primaryContainer,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                      child: InkWell(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                        onTap: () => ref.read(bottomSheetsNotifierProvider.notifier).showQuickSettings(),
+                bottom: 24,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => ref.read(bottomSheetsNotifierProvider.notifier).showQuickSettings(),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
                         child: Container(
-                          height: 32,
-                          padding: const EdgeInsetsDirectional.only(start: 16, end: 8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(t.pages.home.quickSettings),
-                              const Gap(4),
-                              const Icon(Icons.arrow_drop_up_rounded, size: 16),
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: theme.brightness == Brightness.dark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : Colors.black.withValues(alpha: 0.06),
+                            border: Border.all(
+                              color: theme.brightness == Brightness.dark
+                                  ? Colors.white.withValues(alpha: 0.15)
+                                  : Colors.black.withValues(alpha: 0.08),
+                              width: 0.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
+                              ),
                             ],
+                          ),
+                          child: Icon(
+                            Icons.key_rounded,
+                            color: theme.brightness == Brightness.dark
+                                ? Colors.white.withValues(alpha: 0.85)
+                                : Colors.black.withValues(alpha: 0.65),
+                            size: 24,
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
           ],
