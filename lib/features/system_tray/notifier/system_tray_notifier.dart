@@ -86,17 +86,15 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
   String _trayIconPath(ConnectionStatus status) {
     const images = Assets.images;
     final isWindows = PlatformUtils.isWindows;
-    // macOS 26 style: white shield when connected, gray shield when disconnected
+    // Gold shield for connected, amber for connecting/disconnecting, dim for disconnected
     switch (status) {
       case Connected():
-        // White shield - full visibility when VPN is active
         return isWindows ? images.trayIconConnectedIco : images.trayIconConnectedPng.path;
       case Connecting():
+        return isWindows ? images.trayIconConnectingIco : images.trayIconConnectingPng.path;
       case Disconnecting():
-        // Gray shield - transitioning state
-        return isWindows ? images.trayIconDisconnectedIco : images.trayIconDisconnectedPng.path;
+        return isWindows ? images.trayIconDisconnectingIco : images.trayIconDisconnectingPng.path;
       case Disconnected():
-        // Gray shield - VPN is off, subtle indicator
         return isWindows ? images.trayIconDisconnectedIco : images.trayIconDisconnectedPng.path;
     }
   }
@@ -140,12 +138,8 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
 
   @override
   Future<void> onTrayIconMouseDown() async {
-    // if (Platform.isMacOS) {
-    //   await trayManager.popUpContextMenu();
-    // } else {
-    //   await ref.read(windowNotifierProvider.notifier).hideOrShow();
-    // }
-    await ref.read(windowNotifierProvider.notifier).showOrHide();
+    // Left-click toggles VPN connection directly
+    await ref.read(connectionNotifierProvider.notifier).toggleConnection();
   }
 
   @override
