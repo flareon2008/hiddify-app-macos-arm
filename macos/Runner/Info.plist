@@ -47,6 +47,10 @@
 	</array>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Pulse VPN needs access to manage network connections for VPN functionality.</string>
+	<key>LSUIElement</key>
+	<false/>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>ar</string>
