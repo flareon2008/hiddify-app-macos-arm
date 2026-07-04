@@ -42,8 +42,38 @@ jobs:
       - name: Prepare (deps + codegen + core libs)
         run: make macos-prepare
 
+      - name: Sign hiddify-core.dylib (ad-hoc)
+        run: |
+          echo "=== Signing hiddify-core.dylib ==="
+          ls -la hiddify-core/bin/
+          codesign --force --sign - --timestamp --entitlements macos/Runner/DebugProfile.entitlements hiddify-core/bin/hiddify-core.dylib || \
+          codesign --force --sign - hiddify-core/bin/hiddify-core.dylib || \
+          echo "Warning: codesign failed, continuing anyway"
+          codesign -dvv hiddify-core/bin/hiddify-core.dylib || true
+
       - name: Build and package
         run: make macos-release
+
+      - name: Sign app bundle (ad-hoc deep)
+        run: |
+          echo "=== Signing app bundle ==="
+          APP_PATH=$(find dist -name "*.app" -type d | head -1)
+          if [ -n "$APP_PATH" ]; then
+            echo "Found app: $APP_PATH"
+            # Deep sign the entire bundle with entitlements
+            codesign --force --deep --sign - --entitlements macos/Runner/Release.entitlements "$APP_PATH" || \
+            codesign --force --deep --sign - "$APP_PATH" || \
+            echo "Warning: deep codesign failed"
+            # Sign the dylib inside the app specifically
+            find "$APP_PATH" -name "hiddify-core.dylib" -exec codesign --force --sign - --entitlements macos/Runner/Release.entitlements {} \; || true
+            # Verify
+            codesign -dvv "$APP_PATH" || true
+            echo "=== Contents ==="
+            find "$APP_PATH/Frameworks" -type f 2>/dev/null || true
+          else
+            echo "No .app found in dist/"
+            find dist -type f | head -20
+          fi
 
       - name: Find artifacts
         run: |
