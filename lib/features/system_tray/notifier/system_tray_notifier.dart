@@ -69,7 +69,7 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
       ),
       MenuItem.submenu(
         label: t.pages.settings.inbound.serviceMode,
-        icon: Assets.images.trayIconDisconnectedPng,
+        icon: Assets.images.trayIconDisconnectedPng.path,
         submenu: Menu(
           items: [
             ...ServiceMode.values.map(
