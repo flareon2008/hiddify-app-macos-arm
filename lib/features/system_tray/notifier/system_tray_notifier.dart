@@ -91,9 +91,11 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
       case Connected():
         return isWindows ? images.trayIconConnectedIco : images.trayIconConnectedPng.path;
       case Connecting():
-        return isWindows ? images.trayIconConnectingIco : images.trayIconConnectingPng.path;
+        // Connecting: amber shield (not in generated assets, use direct path)
+        return 'assets/images/tray_icon_connecting.png';
       case Disconnecting():
-        return isWindows ? images.trayIconDisconnectingIco : images.trayIconDisconnectingPng.path;
+        // Disconnecting: amber outline shield (not in generated assets, use direct path)
+        return 'assets/images/tray_icon_disconnecting.png';
       case Disconnected():
         return isWindows ? images.trayIconDisconnectedIco : images.trayIconDisconnectedPng.path;
     }
