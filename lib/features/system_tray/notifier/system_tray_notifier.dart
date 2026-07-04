@@ -78,6 +78,7 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
           ],
         ),
       ),
+      MenuItem(key: 'show', label: t.common.openApp),
       MenuItem.separator(),
       MenuItem(key: 'quit', label: t.common.quit),
     ],
@@ -129,6 +130,8 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
       await ref.read(windowNotifierProvider.notifier).show();
     } else if (menuItem.key == 'connection') {
       await ref.read(connectionNotifierProvider.notifier).toggleConnection();
+    } else if (menuItem.key == 'show') {
+      await ref.read(windowNotifierProvider.notifier).show();
     } else if (menuItem.key == 'quit') {
       await ref.read(windowNotifierProvider.notifier).exit();
     } else {

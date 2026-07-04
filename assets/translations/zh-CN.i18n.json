@@ -90,7 +90,8 @@
       "autoSave": {
         "success": "更改已自动保存"
       }
-    }
+    },
+    "openApp": "打开应用"
   },
   "intro": {
     "banner": "畅享无限制网络的所需一切",

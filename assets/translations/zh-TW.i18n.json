@@ -90,7 +90,8 @@
       "autoSave": {
         "success": "更改已自動儲存"
       }
-    }
+    },
+    "openApp": "打開應用程式"
   },
   "intro": {
     "banner": "暢享無限制網路的所需一切",

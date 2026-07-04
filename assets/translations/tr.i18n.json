@@ -90,7 +90,8 @@
       "autoSave": {
         "success": "Değişiklikler otomatik olarak kaydedildi"
       }
-    }
+    },
+    "openApp": "Uygulamayı Aç"
   },
   "intro": {
     "banner": "Sınırsız bir internet için ihtiyacınız olan her şey",

@@ -90,7 +90,8 @@
       "autoSave": {
         "success": "Alterações salvas automaticamente com sucesso"
       }
-    }
+    },
+    "openApp": "Abrir aplicativo"
   },
   "intro": {
     "banner": "Tudo o que você precisa para uma internet sem restrições",

@@ -90,7 +90,8 @@
       "autoSave": {
         "success": "Perubahan berhasil disimpan secara otomatis"
       }
-    }
+    },
+    "openApp": "Buka Aplikasi"
   },
   "intro": {
     "banner": "Semua yang Anda butuhkan untuk internet tanpa batasan",

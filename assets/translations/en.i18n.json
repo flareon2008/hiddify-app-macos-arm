@@ -90,7 +90,8 @@
       "autoSave": {
         "success": "Changes auto-saved successfully"
       }
-    }
+    },
+    "openApp": "Open App"
   },
   "intro": {
     "banner": "All you need for an unrestricted internet",
