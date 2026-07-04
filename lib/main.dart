@@ -14,5 +14,5 @@ Future<void> main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent, systemNavigationBarColor: Colors.transparent),
   );
 
-  return await lazyBootstrap(widgetsBinding, Environment.dev);
+  return await lazyBootstrap(widgetsBinding, Environment.prod);
 }

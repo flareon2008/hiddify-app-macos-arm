@@ -190,11 +190,6 @@ class SettingsPage extends HookConsumerWidget {
               icon: Icons.description_rounded,
               namedLocation: context.namedLocation('logs'),
             ),
-            SettingsSection(
-              title: t.pages.about.title,
-              icon: Icons.info_rounded,
-              namedLocation: context.namedLocation('about'),
-            ),
           ],
         ],
       ),
