@@ -69,7 +69,7 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
       ),
       MenuItem.submenu(
         label: t.pages.settings.inbound.serviceMode,
-        icon: Assets.images.trayIconIco,
+        icon: Assets.images.trayIconDisconnectedPng,
         submenu: Menu(
           items: [
             ...ServiceMode.values.map(
@@ -86,7 +86,7 @@ class SystemTrayNotifier extends _$SystemTrayNotifier with TrayListener, AppLogg
   String _trayIconPath(ConnectionStatus status) {
     const images = Assets.images;
     final isWindows = PlatformUtils.isWindows;
-    // Gold shield for connected, amber for connecting/disconnecting, dim for disconnected
+    // White macOS-style shield icons: orange bolt when connected
     switch (status) {
       case Connected():
         return isWindows ? images.trayIconConnectedIco : images.trayIconConnectedPng.path;
