@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -140,77 +139,6 @@ class HomePage extends HookConsumerWidget {
                 ),
               ),
             ),
-            if (ref.watch(hasAnyProfileProvider).value ?? false)
-              Positioned(
-                right: 0,
-                left: 0,
-                bottom: 24,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: () => ref.read(bottomSheetsNotifierProvider.notifier).showQuickSettings(),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-                        child: Container(
-                          height: 48,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: theme.brightness == Brightness.dark
-                                ? Colors.white.withValues(alpha: 0.10)
-                                : Colors.black.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: theme.brightness == Brightness.dark
-                                  ? Colors.white.withValues(alpha: 0.12)
-                                  : Colors.black.withValues(alpha: 0.06),
-                              width: 0.5,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.10),
-                                blurRadius: 24,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.key_rounded,
-                                color: theme.brightness == Brightness.dark
-                                    ? Colors.white.withValues(alpha: 0.85)
-                                    : Colors.black.withValues(alpha: 0.60),
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                t.pages.home.quickSettings,
-                                style: TextStyle(
-                                  color: theme.brightness == Brightness.dark
-                                      ? Colors.white.withValues(alpha: 0.85)
-                                      : Colors.black.withValues(alpha: 0.60),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                color: theme.brightness == Brightness.dark
-                                    ? Colors.white.withValues(alpha: 0.40)
-                                    : Colors.black.withValues(alpha: 0.25),
-                                size: 16,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),
