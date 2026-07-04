@@ -60,14 +60,8 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
     final hideFromDock = ref.read(Preferences.hideFromDock);
     loggy.debug("window state. hide from dock: ${hideFromDock ? "Enabled" : "Disabled"}");
 
-    // Apply dock visibility on macOS
-    if (io.Platform.isMacOS) {
-      try {
-        await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': !hideFromDock});
-      } catch (e) {
-        loggy.warning("Failed to set dock visibility on startup", e);
-      }
-    }
+    // Do NOT apply dock visibility here — window must show first.
+    // Dock visibility is applied after the window is shown below.
 
     await windowManager.waitUntilReadyToShow(
       WindowOptions(size: size, center: !isWindowVisible, minimumSize: minimumWindowSize),
@@ -82,11 +76,22 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
       await windowManager.maximize();
       loggy.debug("restoring window to maximized state");
     }
-    if (!silentStart && !hideFromDock) {
+    if (!silentStart) {
       await ref.read(windowNotifierProvider.notifier).show(focus: false);
       loggy.debug("showing app window on start");
     } else {
-      loggy.debug("silent start or hide from dock, remain hidden accessible via tray");
+      loggy.debug("silent start, remain hidden accessible via tray");
+    }
+
+    // NOW apply dock visibility AFTER window is shown
+    if (io.Platform.isMacOS && hideFromDock) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      try {
+        await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': false});
+        loggy.debug("dock hidden after window shown");
+      } catch (e) {
+        loggy.warning("Failed to set dock visibility on startup", e);
+      }
     }
   }
 
@@ -111,32 +116,10 @@ class WindowNotifier extends _$WindowNotifier with AppLogger {
   }
 
   Future<void> show({bool focus = true}) async {
-    if (io.Platform.isMacOS) {
-      final hideFromDock = ref.read(Preferences.hideFromDock);
-      if (hideFromDock) {
-        // Temporarily make app regular so window can show and receive focus
-        try {
-          await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': true});
-        } catch (e) {
-          loggy.warning("Failed to set dock visibility for show", e);
-        }
-      }
-    }
     await windowManager.show();
     if (focus) await windowManager.focus();
     if (io.Platform.isMacOS) {
-      final hideFromDock = ref.read(Preferences.hideFromDock);
-      if (hideFromDock) {
-        // After window is shown and focused, hide from dock again
-        await Future.delayed(const Duration(milliseconds: 200));
-        try {
-          await _dockVisibilityChannel.invokeMethod('setDockVisibility', {'visible': false});
-        } catch (e) {
-          loggy.warning("Failed to re-hide dock after show", e);
-        }
-      } else {
-        await windowManager.setSkipTaskbar(false);
-      }
+      await windowManager.setSkipTaskbar(false);
     }
   }
 
