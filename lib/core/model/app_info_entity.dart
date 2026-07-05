@@ -19,7 +19,7 @@ class AppInfoEntity with _$AppInfoEntity {
 
   String get userAgent => "PulseVPN/$version ($operatingSystem) like ClashMeta v2ray sing-box";
 
-  String get presentVersion => environment == Environment.prod ? version : "$version ${environment.name}";
+  String get presentVersion => "$version Beta 3";
 
   /// formats app info for sharing
   String format() =>
