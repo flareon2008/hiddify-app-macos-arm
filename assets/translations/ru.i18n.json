@@ -194,6 +194,23 @@
       "termsAndConditions": "Условия использования",
       "privacyPolicy": "Политика конфиденциальности"
     },
+    "apps": {
+      "title": "Приложения",
+      "empty": "Приложения ещё не добавлены",
+      "emptyHint": "Добавьте приложения, трафик которых должен маршрутизироваться через прокси",
+      "addTitle": "Добавить приложение",
+      "editTitle": "Редактировать приложение",
+      "deleteTitle": "Удалить приложение",
+      "deleteMessage(rich)": "Вы уверены, что хотите удалить \"${name}\"?",
+      "formName": "Название приложения",
+      "formNameHint": "например, Google Chrome",
+      "formNameRequired": "Название приложения обязательно",
+      "formProcessName": "Имя процесса",
+      "formProcessNameHint": "например, chrome.exe, google-chrome, Google Chrome",
+      "formProcessNameRequired": "Имя процесса обязательно",
+      "formProcessPath": "Путь к процессу (необязательно)",
+      "formProcessPathHint": "например, /Applications/Google Chrome.app"
+    },
     "settings": {
       "title": "Настройки",
       "resetTunnel": "Сбросить профиль VPN",

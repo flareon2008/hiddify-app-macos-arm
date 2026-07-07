@@ -5,6 +5,7 @@ import 'package:hiddify/core/model/region.dart';
 import 'package:hiddify/core/utils/exception_handler.dart';
 import 'package:hiddify/core/utils/json_converters.dart';
 import 'package:hiddify/core/utils/preferences_utils.dart';
+import 'package:hiddify/features/apps/overview/proxy_apps_notifier.dart';
 import 'package:hiddify/features/log/model/log_level.dart';
 import 'package:hiddify/features/profile/data/profile_parser.dart';
 import 'package:hiddify/features/route_rules/notifier/rules_notifier.dart';
@@ -350,6 +351,31 @@ abstract class ConfigOptions {
     "lan-sharing-password",
   };
 
+  /// Builds the combined route rule: user-defined rules + process rules from Apps feature
+  static Map<String, dynamic> _buildRouteRuleWithApps(Ref ref) {
+    final userRules = ref.watch(rulesNotifierProvider);
+    final proxyApps = ref.watch(proxyAppsProvider);
+
+    // Generate process rules from enabled proxy apps
+    final processRules = proxyApps
+        .where((app) => app.enabled)
+        .map(
+          (app) => Rule(
+            listOrder: 0,
+            enabled: true,
+            name: 'Proxy: ${app.name}',
+            outbound: Outbound.proxy,
+            processNames: [app.processName],
+            processPaths: app.processPath != null ? [app.processPath!] : [],
+          ),
+        )
+        .toList();
+
+    // Combine: process rules first (higher priority), then user rules
+    final allRules = [...processRules, ...userRules];
+    return RouteRule(rules: allRules).toProto3Json()! as Map<String, dynamic>;
+  }
+
   static final Map<String, StateNotifierProvider<PreferencesNotifier, dynamic>> preferences = {
     "region": region,
     "balancer-strategy": balancerStrategy,
@@ -544,7 +570,7 @@ abstract class ConfigOptions {
         ),
         profile: SingboxUnblockerProfileOption(id: ref.watch(unblockerProfileId)),
       ),
-      routeRule: RouteRule(rules: ref.watch(rulesNotifierProvider)).toProto3Json()! as Map<String, dynamic>,
+      routeRule: _buildRouteRuleWithApps(ref),
     );
   });
 }

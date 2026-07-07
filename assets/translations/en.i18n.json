@@ -182,13 +182,30 @@
     },
     "about": {
       "title": "About",
-      "notAvailableMsg": "Already using the latest version",
-      "checkForUpdate": "Check for update",
+      "notAvailableMsg": "You are already using the latest version",
+      "checkForUpdate": "Check for updates",
       "openWorkingDir": "Open working directory",
       "sourceCode": "Source code",
       "telegramChannel": "Telegram channel",
-      "termsAndConditions": "Terms and conditions",
-      "privacyPolicy": "Privacy policy"
+      "termsAndConditions": "Terms and Conditions",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "apps": {
+      "title": "Apps",
+      "empty": "No apps added yet",
+      "emptyHint": "Add applications whose traffic should be routed through the proxy",
+      "addTitle": "Add app",
+      "editTitle": "Edit app",
+      "deleteTitle": "Delete app",
+      "deleteMessage(rich)": "Are you sure you want to remove \"${name}\"?",
+      "formName": "App name",
+      "formNameHint": "e.g. Google Chrome",
+      "formNameRequired": "App name is required",
+      "formProcessName": "Process name",
+      "formProcessNameHint": "e.g. chrome.exe, google-chrome, Google Chrome",
+      "formProcessNameRequired": "Process name is required",
+      "formProcessPath": "Process path (optional)",
+      "formProcessPathHint": "e.g. /Applications/Google Chrome.app"
     },
     "settings": {
       "title": "Settings",
