@@ -9,7 +9,6 @@ import 'package:hiddify/core/router/go_router/helper/active_breakpoint_notifier.
 import 'package:hiddify/core/router/go_router/helper/custom_transition.dart';
 import 'package:hiddify/core/router/go_router/refresh_listenable.dart';
 import 'package:hiddify/features/about/widget/about_page.dart';
-import 'package:hiddify/features/apps/widget/apps_page.dart';
 import 'package:hiddify/features/home/widget/home_page.dart';
 import 'package:hiddify/features/intro/widget/intro_page.dart';
 import 'package:hiddify/features/log/overview/logs_page.dart';
@@ -37,7 +36,6 @@ part 'routing_config_notifier.g.dart';
 final branchesScope = <String, FocusScopeNode>{
   'home': FocusScopeNode(),
   'profiles': FocusScopeNode(),
-  'apps': FocusScopeNode(),
   'settings': FocusScopeNode(),
   'logs': FocusScopeNode(),
 };
@@ -48,12 +46,12 @@ final loadingConfig = RoutingConfig(
 );
 
 String getNameOfBranch(bool isMobileBreakpoint, bool showProfilesAction, int index) => isMobileBreakpoint
-    ? ['home', 'apps', 'settings'][index]
-    : ['home', if (showProfilesAction) 'profiles', 'apps', 'settings', 'logs'][index];
+    ? ['home', 'settings'][index]
+    : ['home', if (showProfilesAction) 'profiles', 'settings', 'logs'][index];
 
 int getIndexOfBranch(bool isMobileBreakpoint, bool showProfilesAction, String name) => isMobileBreakpoint
-    ? ['home', 'apps', 'settings'].indexOf(name)
-    : ['home', if (showProfilesAction) 'profiles', 'apps', 'settings', 'logs'].indexOf(name);
+    ? ['home', 'settings'].indexOf(name)
+    : ['home', if (showProfilesAction) 'profiles', 'settings', 'logs'].indexOf(name);
 
 @Riverpod(keepAlive: true)
 class RoutingConfigNotifier extends _$RoutingConfigNotifier {
@@ -169,15 +167,6 @@ class RoutingConfigNotifier extends _$RoutingConfigNotifier {
                   ),
                 ],
               ),
-            StatefulShellBranch(
-              routes: <GoRoute>[
-                GoRoute(
-                  name: 'apps',
-                  path: '/apps',
-                  builder: (_, _) => FocusScope(node: branchesScope['apps'], child: const AppsPage()),
-                ),
-              ],
-            ),
             StatefulShellBranch(
               routes: <GoRoute>[
                 GoRoute(
