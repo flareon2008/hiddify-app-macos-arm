@@ -207,6 +207,9 @@
       "formProcessPath": "Process path (optional)",
       "formProcessPathHint": "e.g. /Applications/Google Chrome.app",
       "systemProxyWarning": "System proxy only affects apps that respect OS proxy settings. To route ALL app traffic, switch to VPN (TUN) mode in Settings → Inbound.",
+      "addManually": "Add manually",
+      "browseInstalled": "Browse installed apps",
+      "alreadyAdded": "Already added",
     },
     "settings": {
       "title": "Settings",

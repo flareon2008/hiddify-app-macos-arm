@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/router/dialog/dialog_notifier.dart';
+import 'package:hiddify/features/apps/data/macos_app_scanner.dart';
 import 'package:hiddify/features/apps/model/proxy_app.dart';
 import 'package:hiddify/features/apps/overview/proxy_apps_notifier.dart';
 import 'package:hiddify/singbox/model/singbox_config_enum.dart';
@@ -146,7 +147,7 @@ class AppsPage extends HookConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddAppDialog(context, ref),
+        onPressed: () => _showAddOptions(context, ref),
         child: const Icon(Icons.add_rounded),
       ),
     );
@@ -158,6 +159,47 @@ class AppsPage extends HookConsumerWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) => _AddAppSheet(t: t),
+    );
+  }
+
+  void _showAddOptions(BuildContext context, WidgetRef ref) {
+    final t = ref.read(translationsProvider).requireValue;
+    final theme = Theme.of(context);
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_rounded),
+              title: Text(t.pages.apps.addManually),
+              onTap: () {
+                Navigator.of(context).pop();
+                _showAddAppDialog(context, ref);
+              },
+            ),
+            if (PlatformUtils.isMacOS)
+              ListTile(
+                leading: const Icon(Icons.desktop_mac_rounded),
+                title: Text(t.pages.apps.browseInstalled),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _showBrowseAppsDialog(context, ref);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showBrowseAppsDialog(BuildContext context, WidgetRef ref) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => const _BrowseAppsScreen(),
+      ),
     );
   }
 }
@@ -478,5 +520,173 @@ class _EditAppSheetState extends ConsumerState<_EditAppSheet> {
               : _processPathController.text.trim(),
         );
     Navigator.of(context).pop();
+  }
+}
+
+class _BrowseAppsScreen extends ConsumerStatefulWidget {
+  const _BrowseAppsScreen();
+
+  @override
+  ConsumerState<_BrowseAppsScreen> createState() => _BrowseAppsScreenState();
+}
+
+class _BrowseAppsScreenState extends ConsumerState<_BrowseAppsScreen> {
+  List<InstalledApp> _apps = [];
+  List<InstalledApp> _filteredApps = [];
+  bool _isLoading = true;
+  String _searchQuery = '';
+  final Set<String> _selectedBundleIds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadApps();
+  }
+
+  Future<void> _loadApps() async {
+    final apps = await MacOSAppScanner.getInstalledApps();
+    if (mounted) {
+      setState(() {
+        _apps = apps;
+        _filteredApps = apps;
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _filterApps(String query) {
+    setState(() {
+      _searchQuery = query;
+      if (query.isEmpty) {
+        _filteredApps = _apps;
+      } else {
+        _filteredApps = _apps
+            .where(
+              (a) =>
+                  a.name.toLowerCase().contains(query.toLowerCase()) ||
+                  a.bundleId.toLowerCase().contains(query.toLowerCase()),
+            )
+            .toList();
+      }
+    });
+  }
+
+  void _addSelectedApps() {
+    final existingApps = ref.read(proxyAppsProvider);
+    final existingNames = existingApps.map((a) => a.processName).toSet();
+    var added = 0;
+
+    for (final app in _filteredApps.where((a) => _selectedBundleIds.contains(a.bundleId))) {
+      if (!existingNames.contains(app.executableName)) {
+        ref.read(proxyAppsProvider.notifier).addApp(
+              name: app.name,
+              processName: app.executableName,
+              processPath: app.appPath,
+            );
+        added++;
+      }
+    }
+
+    Navigator.of(context).pop(added);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = ref.watch(translationsProvider).requireValue;
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(t.pages.apps.browseInstalled),
+        actions: [
+          if (_selectedBundleIds.isNotEmpty)
+            TextButton.icon(
+              onPressed: _addSelectedApps,
+              icon: const Icon(Icons.add_rounded),
+              label: Text('${t.common.add} (${_selectedBundleIds.length})'),
+            ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: TextField(
+                    onChanged: _filterApps,
+                    decoration: InputDecoration(
+                      hintText: "${MaterialLocalizations.of(context).searchFieldLabel}...",
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const Gap(8),
+                Expanded(
+                  child: _filteredApps.isEmpty
+                      ? Center(
+                          child: Text(
+                            t.common.empty,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: _filteredApps.length,
+                          itemBuilder: (context, index) {
+                            final app = _filteredApps[index];
+                            final isSelected = _selectedBundleIds.contains(app.bundleId);
+                            final existingApps = ref.read(proxyAppsProvider);
+                            final isAlreadyAdded = existingApps.any(
+                              (a) => a.processName == app.executableName,
+                            );
+
+                            return CheckboxListTile(
+                              value: isSelected,
+                              onChanged: isAlreadyAdded
+                                  ? null
+                                  : (value) {
+                                      setState(() {
+                                        if (isSelected) {
+                                          _selectedBundleIds.remove(app.bundleId);
+                                        } else {
+                                          _selectedBundleIds.add(app.bundleId);
+                                        }
+                                      });
+                                    },
+                              title: Text(
+                                app.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(
+                                isAlreadyAdded
+                                    ? t.pages.apps.alreadyAdded
+                                    : app.executableName,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: isAlreadyAdded
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.onSurfaceVariant,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              secondary: CircleAvatar(
+                                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                                child: Icon(
+                                  Icons.apps_rounded,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+    );
   }
 }
