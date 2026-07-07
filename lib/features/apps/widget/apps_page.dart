@@ -5,6 +5,9 @@ import 'package:hiddify/core/localization/translations.dart';
 import 'package:hiddify/core/router/dialog/dialog_notifier.dart';
 import 'package:hiddify/features/apps/model/proxy_app.dart';
 import 'package:hiddify/features/apps/overview/proxy_apps_notifier.dart';
+import 'package:hiddify/singbox/model/singbox_config_enum.dart';
+import 'package:hiddify/features/settings/data/config_option_repository.dart';
+import 'package:hiddify/utils/platform_utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class AppsPage extends HookConsumerWidget {
@@ -31,6 +34,10 @@ class AppsPage extends HookConsumerWidget {
       },
       [apps, searchQuery.value],
     );
+
+    final serviceMode = ref.watch(ConfigOptions.serviceMode);
+    final isTunMode = serviceMode == ServiceMode.tun;
+    final isDesktop = PlatformUtils.isDesktop;
 
     return Scaffold(
       appBar: isSearching.value
@@ -67,46 +74,77 @@ class AppsPage extends HookConsumerWidget {
                 ),
               ],
             ),
-      body: apps.isEmpty
-          ? Center(
+      body: Column(
+        children: [
+          if (!isTunMode && isDesktop)
+            Material(
+              color: Theme.of(context).colorScheme.tertiaryContainer,
               child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
                   children: [
                     Icon(
-                      Icons.apps_rounded,
-                      size: 64,
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                      Icons.info_outline_rounded,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
-                    const Gap(16),
-                    Text(
-                      t.pages.apps.empty,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                    const Gap(12),
+                    Expanded(
+                      child: Text(
+                        t.pages.apps.systemProxyWarning,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const Gap(8),
-                    Text(
-                      t.pages.apps.emptyHint,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                      ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 88),
-              itemCount: filteredApps.length,
-              itemBuilder: (context, index) {
-                final app = filteredApps[index];
-                return _ProxyAppTile(app: app);
-              },
             ),
+          Expanded(
+            child: apps.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.apps_rounded,
+                            size: 64,
+                            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          ),
+                          const Gap(16),
+                          Text(
+                            t.pages.apps.empty,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const Gap(8),
+                          Text(
+                            t.pages.apps.emptyHint,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 88),
+                    itemCount: filteredApps.length,
+                    itemBuilder: (context, index) {
+                      final app = filteredApps[index];
+                      return _ProxyAppTile(app: app);
+                    },
+                  ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddAppDialog(context, ref),
         child: const Icon(Icons.add_rounded),

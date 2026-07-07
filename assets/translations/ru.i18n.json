@@ -209,7 +209,8 @@
       "formProcessNameHint": "например, chrome.exe, google-chrome, Google Chrome",
       "formProcessNameRequired": "Имя процесса обязательно",
       "formProcessPath": "Путь к процессу (необязательно)",
-      "formProcessPathHint": "например, /Applications/Google Chrome.app"
+      "formProcessPathHint": "например, /Applications/Google Chrome.app",
+      "systemProxyWarning": "Системный прокси влияет только на приложения, которые подчиняются настройкам прокси ОС. Для маршрутизации ВСЕГО трафика переключитесь в режим VPN (TUN) в Настройки → Входящие.",
     },
     "settings": {
       "title": "Настройки",
