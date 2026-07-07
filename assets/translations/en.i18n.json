@@ -209,7 +209,7 @@
       "systemProxyWarning": "System proxy only affects apps that respect OS proxy settings. To route ALL app traffic, switch to VPN (TUN) mode in Settings → Inbound.",
       "addManually": "Add manually",
       "browseInstalled": "Browse installed apps",
-      "alreadyAdded": "Already added",
+      "alreadyAdded": "Already added"
     },
     "settings": {
       "title": "Settings",
