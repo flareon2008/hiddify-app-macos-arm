@@ -201,7 +201,7 @@
       "addTitle": "Добавить приложение",
       "editTitle": "Редактировать приложение",
       "deleteTitle": "Удалить приложение",
-      "deleteMessage(rich)": "Вы уверены, что хотите удалить \"${name}\"?",
+      "deleteMessage": "Вы уверены, что хотите удалить \"${name}\"?",
       "formName": "Название приложения",
       "formNameHint": "например, Google Chrome",
       "formNameRequired": "Название приложения обязательно",

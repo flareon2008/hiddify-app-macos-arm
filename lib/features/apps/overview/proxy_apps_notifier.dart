@@ -9,7 +9,7 @@ part 'proxy_apps_notifier.g.dart';
 
 @Riverpod(keepAlive: true)
 class ProxyApps extends _$ProxyApps {
-  late final PreferencesEntry<String> _entry;
+  late final PreferencesEntry<String, String> _entry;
 
   @override
   List<ProxyApp> build() {

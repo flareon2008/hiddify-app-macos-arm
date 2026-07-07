@@ -197,7 +197,7 @@
       "addTitle": "Add app",
       "editTitle": "Edit app",
       "deleteTitle": "Delete app",
-      "deleteMessage(rich)": "Are you sure you want to remove \"${name}\"?",
+      "deleteMessage": "Are you sure you want to remove \"${name}\"?",
       "formName": "App name",
       "formNameHint": "e.g. Google Chrome",
       "formNameRequired": "App name is required",
