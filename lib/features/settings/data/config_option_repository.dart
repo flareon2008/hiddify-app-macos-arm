@@ -354,6 +354,15 @@ abstract class ConfigOptions {
   /// Builds the combined route rule: user-defined rules + process rules from Apps feature
   static Map<String, dynamic> _buildRouteRuleWithApps(Ref ref) {
     final userRules = ref.watch(rulesNotifierProvider);
+    final mode = ref.watch(serviceMode);
+
+    // Process rules only work in TUN mode — in system proxy mode they can
+    // cause "failed to start background core" because sing-box can't match
+    // process-level traffic without a TUN interface.
+    if (mode != ServiceMode.tun) {
+      return RouteRule(rules: userRules).toProto3Json()! as Map<String, dynamic>;
+    }
+
     final proxyApps = ref.watch(proxyAppsProvider);
 
     // Generate process rules from enabled proxy apps
