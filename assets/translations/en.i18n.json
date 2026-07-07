@@ -182,34 +182,13 @@
     },
     "about": {
       "title": "About",
-      "notAvailableMsg": "You are already using the latest version",
-      "checkForUpdate": "Check for updates",
+      "notAvailableMsg": "Already using the latest version",
+      "checkForUpdate": "Check for update",
       "openWorkingDir": "Open working directory",
       "sourceCode": "Source code",
       "telegramChannel": "Telegram channel",
-      "termsAndConditions": "Terms and Conditions",
-      "privacyPolicy": "Privacy Policy"
-    },
-    "apps": {
-      "title": "Apps",
-      "empty": "No apps added yet",
-      "emptyHint": "Add applications whose traffic should be routed through the proxy",
-      "addTitle": "Add app",
-      "editTitle": "Edit app",
-      "deleteTitle": "Delete app",
-      "deleteMessage": "Are you sure you want to remove \"${name}\"?",
-      "formName": "App name",
-      "formNameHint": "e.g. Google Chrome",
-      "formNameRequired": "App name is required",
-      "formProcessName": "Process name",
-      "formProcessNameHint": "e.g. chrome.exe, google-chrome, Google Chrome",
-      "formProcessNameRequired": "Process name is required",
-      "formProcessPath": "Process path (optional)",
-      "formProcessPathHint": "e.g. /Applications/Google Chrome.app",
-      "systemProxyWarning": "System proxy only affects apps that respect OS proxy settings. To route ALL app traffic, switch to VPN (TUN) mode in Settings → Inbound.",
-      "addManually": "Add manually",
-      "browseInstalled": "Browse installed apps",
-      "alreadyAdded": "Already added"
+      "termsAndConditions": "Terms and conditions",
+      "privacyPolicy": "Privacy policy"
     },
     "settings": {
       "title": "Settings",
